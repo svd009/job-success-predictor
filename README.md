@@ -148,7 +148,7 @@ job-predictor/
 
 ## Built By
 
-**Sujay Dhhoka** · AWS ML Engineer Associate  
+**Suujay Dhhoka** · AWS ML Engineer Associate  
 TA @ Rutgers University · MLOps & Production ML
 
-[LinkedIn](https://linkedin.com/in/suujaydhhoka) · [GitHub](https://github.com/suujaydhhoka)
+[LinkedIn](https://www.linkedin.com/in/suujay-dhhoka-332018196/) · [GitHub](https://github.com/svd009)
