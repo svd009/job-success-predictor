@@ -1,1 +1,2 @@
-frontend/index.html linguist-language=Python
+frontend/index.html linguist-detectable=true
+frontend/index.html linguist-language=HTML
