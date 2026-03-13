@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Job Application Success Predictor</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface2: #1a1a26;
+    --border: rgba(255,255,255,0.07);
+    --border-bright: rgba(255,255,255,0.15);
+    --text: #f0f0f8;
+    --text-muted: #6b6b8a;
+    --text-dim: #3a3a55;
+    --accent: #7c6dfa;
+    --accent2: #fa6d9e;
+    --accent3: #6dfac5;
+    --accent-glow: rgba(124,109,250,0.2);
+    --green: #6dfac5;
+    --amber: #fac56d;
+    --red: #fa6d6d;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(124,109,250,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(124,109,250,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container { max-width: 960px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+
+  /* Header */
+  header {
+    padding: 48px 0 0;
+    text-align: center;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(124,109,250,0.1);
+    border: 1px solid rgba(124,109,250,0.3);
+    border-radius: 100px;
+    padding: 6px 16px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+
+  .badge-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 2s ease infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(36px, 6vw, 68px);
+    font-weight: 800;
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+    margin-bottom: 16px;
+  }
+
+  h1 .line1 { display: block; }
+  h1 .line2 {
+    display: block;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .subtitle {
+    font-size: 16px;
+    color: var(--text-muted);
+    max-width: 520px;
+    margin: 0 auto 48px;
+    line-height: 1.7;
+    font-weight: 300;
+  }
+
+  /* Tech stack pills */
+  .tech-stack {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 56px;
+  }
+
+  .tech-pill {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    padding: 4px 12px;
+    border-radius: 4px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    letter-spacing: 0.04em;
+  }
+
+  /* Input section */
+  .input-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    margin-bottom: 32px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .input-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity: 0.6;
+  }
+
+  .input-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .input-label::before {
+    content: '';
+    display: inline-block;
+    width: 3px; height: 12px;
+    background: var(--accent);
+    border-radius: 2px;
+  }
+
+  textarea {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 1.7;
+    padding: 16px 20px;
+    resize: vertical;
+    min-height: 200px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  textarea:focus {
+    border-color: rgba(124,109,250,0.5);
+    box-shadow: 0 0 0 3px rgba(124,109,250,0.08);
+  }
+
+  textarea::placeholder { color: var(--text-dim); }
+
+  .input-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 20px;
+    gap: 16px;
+  }
+
+  .char-count {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+
+  .btn-analyze {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 14px 28px;
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.02em;
+  }
+
+  .btn-analyze:hover:not(:disabled) {
+    background: #8f82fb;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(124,109,250,0.35);
+  }
+
+  .btn-analyze:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .btn-analyze .arrow { transition: transform 0.2s; }
+  .btn-analyze:hover:not(:disabled) .arrow { transform: translateX(3px); }
+
+  .demo-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .demo-btn:hover { border-color: var(--border-bright); color: var(--text); }
+
+  /* Loading */
+  .loading {
+    display: none;
+    text-align: center;
+    padding: 48px;
+  }
+
+  .loading.active { display: block; }
+
+  .loading-ring {
+    width: 40px; height: 40px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 16px;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .loading p {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+  }
+
+  /* Results */
+  .results { display: none; }
+  .results.active { display: block; }
+
+  /* Score hero */
+  .score-hero {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 36px 32px;
+    margin-bottom: 20px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 40px;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .score-hero::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; right: -60px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: var(--accent-glow);
+    filter: blur(60px);
+    pointer-events: none;
+  }
+
+  .score-circle {
+    position: relative;
+    width: 120px; height: 120px;
+    flex-shrink: 0;
+  }
+
+  .score-circle svg { transform: rotate(-90deg); }
+
+  .score-circle .track {
+    fill: none;
+    stroke: var(--surface2);
+    stroke-width: 8;
+  }
+
+  .score-circle .fill {
+    fill: none;
+    stroke-width: 8;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .score-number {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+
+  .score-number .num {
+    font-family: 'Syne', sans-serif;
+    font-size: 30px;
+    font-weight: 800;
+  }
+
+  .score-number .pct {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  .score-details h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .score-details .company-name {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+    margin-bottom: 16px;
+    letter-spacing: 0.04em;
+  }
+
+  .score-meta {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .meta-item {
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .meta-item strong {
+    color: var(--text);
+    font-weight: 500;
+    margin-right: 4px;
+  }
+
+  /* Stats row */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+  }
+
+  .stat-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .stat-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+  }
+
+  /* Two col layout */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+  }
+
+  .panel-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .panel-title .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+  }
+
+  /* Skills */
+  .skill-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(109,250,197,0.08);
+    border: 1px solid rgba(109,250,197,0.2);
+    color: var(--green);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    padding: 5px 10px;
+    border-radius: 6px;
+    margin: 3px;
+  }
+
+  .skill-chip.missing {
+    background: rgba(250,109,109,0.08);
+    border-color: rgba(250,109,109,0.2);
+    color: var(--red);
+  }
+
+  .skill-chip.amber {
+    background: rgba(250,197,109,0.08);
+    border-color: rgba(250,197,109,0.2);
+    color: var(--amber);
+  }
+
+  .impact-badge {
+    background: rgba(250,109,109,0.2);
+    color: var(--red);
+    font-size: 10px;
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+
+  .skill-group { margin-bottom: 14px; }
+
+  .group-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    font-weight: 400;
+  }
+
+  /* Job list */
+  .job-list { }
+
+  .job-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.15s;
+    border: 1px solid transparent;
+    margin-bottom: 4px;
+  }
+
+  .job-row:hover { background: var(--surface2); border-color: var(--border); }
+  .job-row.active { background: rgba(124,109,250,0.1); border-color: rgba(124,109,250,0.25); }
+
+  .job-rank {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    width: 20px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .job-info { flex: 1; min-width: 0; }
+
+  .job-title-text {
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 2px;
+  }
+
+  .job-company-text {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+  }
+
+  .job-score-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .bar-track {
+    width: 60px;
+    height: 4px;
+    background: var(--surface2);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.8s ease;
+  }
+
+  .job-score-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    width: 36px;
+    text-align: right;
+  }
+
+  /* Architecture section */
+  .arch-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    margin-bottom: 20px;
+  }
+
+  .arch-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .pipeline {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    overflow-x: auto;
+    padding-bottom: 8px;
+  }
+
+  .pipe-step {
+    flex-shrink: 0;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 18px;
+    text-align: center;
+    min-width: 120px;
+  }
+
+  .pipe-icon {
+    font-size: 18px;
+    margin-bottom: 6px;
+  }
+
+  .pipe-name {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 2px;
+  }
+
+  .pipe-tech {
+    font-size: 11px;
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .pipe-arrow {
+    color: var(--text-dim);
+    font-size: 18px;
+    padding: 0 4px;
+    flex-shrink: 0;
+  }
+
+  /* Footer */
+  footer {
+    text-align: center;
+    padding: 48px 0;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 0.06em;
+  }
+
+  @media (max-width: 640px) {
+    .two-col { grid-template-columns: 1fr; }
+    .stats-row { grid-template-columns: repeat(3, 1fr); }
+    .score-hero { grid-template-columns: 1fr; gap: 20px; text-align: center; }
+    .score-meta { justify-content: center; }
+    .pipeline { justify-content: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <header>
+    <div class="badge">
+      <div class="badge-dot"></div>
+      ML System · TF-IDF + XGBoost Scoring
+    </div>
+    <h1>
+      <span class="line1">Resume–Job Fit</span>
+      <span class="line2">Predictor</span>
+    </h1>
+    <p class="subtitle">Paste your resume. Get scored against 20 real ML engineering roles. Discover exactly which skills to add for maximum match rate.</p>
+    <div class="tech-stack">
+      <span class="tech-pill">SageMaker Feature Store</span>
+      <span class="tech-pill">XGBoost</span>
+      <span class="tech-pill">FastAPI</span>
+      <span class="tech-pill">TF-IDF Vectorizer</span>
+      <span class="tech-pill">SageMaker Pipelines</span>
+      <span class="tech-pill">Model Monitor</span>
+    </div>
+  </header>
+
+  <!-- Input -->
+  <div class="input-card">
+    <div class="input-label">Your Resume</div>
+    <textarea id="resumeInput" placeholder="Paste your resume text here...
+
+Experience, skills, education — the more detail, the more accurate the scoring. Works best with 200+ words."></textarea>
+    <div class="input-footer">
+      <div>
+        <button class="demo-btn" onclick="loadDemo()">Load sample resume</button>
+        &nbsp;
+        <span class="char-count" id="charCount">0 chars</span>
+      </div>
+      <button class="btn-analyze" id="analyzeBtn" onclick="analyze()">
+        Analyze Resume
+        <span class="arrow">→</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading" id="loading">
+    <div class="loading-ring"></div>
+    <p id="loadingMsg">RUNNING TF-IDF VECTORIZATION...</p>
+  </div>
+
+  <!-- Results -->
+  <div class="results" id="results">
+
+    <!-- Score Hero -->
+    <div class="score-hero" id="scoreHero">
+      <div class="score-circle">
+        <svg width="120" height="120" viewBox="0 0 120 120">
+          <circle class="track" cx="60" cy="60" r="50"/>
+          <circle class="fill" id="scoreFill" cx="60" cy="60" r="50"
+            stroke-dasharray="314"
+            stroke-dashoffset="314"/>
+        </svg>
+        <div class="score-number">
+          <span class="num" id="scoreNum">—</span>
+          <span class="pct">match</span>
+        </div>
+      </div>
+      <div class="score-details">
+        <div class="company-name" id="topCompany">TOP MATCH</div>
+        <h2 id="topTitle">Analyzing...</h2>
+        <div class="score-meta">
+          <div class="meta-item"><strong id="matchedCount">—</strong> skills matched</div>
+          <div class="meta-item"><strong id="coveragePct">—</strong> skill coverage</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-value" id="stat1" style="color: var(--accent)">—</div>
+        <div class="stat-label">Resume Skills Found</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="stat2" style="color: var(--green)">—</div>
+        <div class="stat-label">Jobs Scored</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="stat3" style="color: var(--amber)">—</div>
+        <div class="stat-label">Avg Match Score</div>
+      </div>
+    </div>
+
+    <!-- Skills + Recommendations -->
+    <div class="two-col">
+      <div class="panel">
+        <div class="panel-title">
+          <div class="dot" style="background: var(--green)"></div>
+          Skills Detected
+        </div>
+        <div id="skillsDetected"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">
+          <div class="dot" style="background: var(--red)"></div>
+          Add These Skills
+        </div>
+        <div id="missingSkills"></div>
+        <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); font-size: 12px; color: var(--text-muted); line-height: 1.6;">
+          Adding top missing skills can increase your match score by <strong style="color: var(--amber)">+25–40%</strong> across ML engineering roles.
+        </div>
+      </div>
+    </div>
+
+    <!-- Job Rankings -->
+    <div class="panel" style="margin-bottom: 20px;">
+      <div class="panel-title">
+        <div class="dot" style="background: var(--accent)"></div>
+        All Job Rankings
+      </div>
+      <div id="jobList"></div>
+    </div>
+
+    <!-- Architecture -->
+    <div class="arch-section">
+      <div class="arch-title">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+        System Architecture
+      </div>
+      <div class="pipeline">
+        <div class="pipe-step">
+          <div class="pipe-icon">📄</div>
+          <div class="pipe-name">Input</div>
+          <div class="pipe-tech">Resume Text</div>
+        </div>
+        <div class="pipe-arrow">→</div>
+        <div class="pipe-step">
+          <div class="pipe-icon">🔧</div>
+          <div class="pipe-name">Processing</div>
+          <div class="pipe-tech">SageMaker</div>
+        </div>
+        <div class="pipe-arrow">→</div>
+        <div class="pipe-step">
+          <div class="pipe-icon">🏪</div>
+          <div class="pipe-name">Features</div>
+          <div class="pipe-tech">Feature Store</div>
+        </div>
+        <div class="pipe-arrow">→</div>
+        <div class="pipe-step">
+          <div class="pipe-icon">🤖</div>
+          <div class="pipe-name">Training</div>
+          <div class="pipe-tech">XGBoost</div>
+        </div>
+        <div class="pipe-arrow">→</div>
+        <div class="pipe-step">
+          <div class="pipe-icon">📡</div>
+          <div class="pipe-name">Endpoint</div>
+          <div class="pipe-tech">Live Inference</div>
+        </div>
+        <div class="pipe-arrow">→</div>
+        <div class="pipe-step">
+          <div class="pipe-icon">📊</div>
+          <div class="pipe-name">Monitor</div>
+          <div class="pipe-tech">Model Monitor</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /results -->
+
+  <footer>Built with SageMaker Feature Store · XGBoost · FastAPI · by Sujay Dhhoka</footer>
+
+</div><!-- /container -->
+
+<script>
+// ── Skill taxonomy ──────────────────────────────────────────────────────────
+const SKILL_GROUPS = {
+  "Core ML": ["machine learning","deep learning","neural networks","xgboost","gradient boosting","lightgbm","random forest","scikit-learn","sklearn","supervised learning","reinforcement learning","transfer learning"],
+  "MLOps": ["mlops","sagemaker pipelines","mlflow","kubeflow","airflow","ci/cd","model monitoring","model registry","experiment tracking","feature store","sagemaker feature store","data drift","a/b testing"],
+  "AWS & Cloud": ["sagemaker","aws","s3","lambda","ec2","ecs","eks","dynamodb","cloudwatch","azure","gcp","vertex ai"],
+  "Frameworks": ["pytorch","tensorflow","keras","huggingface","transformers","bert","llm","large language models","fine-tuning"],
+  "Data Eng": ["spark","kafka","flink","sql","bigquery","redshift","hive","delta lake","dbt","pyspark"],
+  "Deployment": ["docker","kubernetes","fastapi","flask","rest api","model serving","sagemaker endpoints","real-time inference","batch inference"],
+  "NLP": ["nlp","natural language processing","text classification","embeddings","information extraction"],
+  "Programming": ["python","scala","java","c++","golang"]
+};
+
+const HIGH_VALUE = {
+  "sagemaker pipelines": 38, "sagemaker feature store": 35, "mlops": 30,
+  "model monitoring": 28, "feature store": 25, "kubeflow": 22, "mlflow": 20,
+  "xgboost": 18, "pytorch": 18, "tensorflow": 18, "kubernetes": 15,
+  "docker": 12, "spark": 12, "fastapi": 10, "causal inference": 15,
+  "distributed training": 20, "llm": 18, "transformers": 18, "a/b testing": 12
+};
+
+const JOB_DESCRIPTIONS = [
+  { id: "aws_mle_01", title: "Machine Learning Engineer", company: "Amazon Web Services", desc: "Python SageMaker XGBoost deep learning TensorFlow PyTorch MLOps Feature Store SageMaker Pipelines Docker Kubernetes distributed training A/B testing scikit-learn Spark SQL CI/CD experiment tracking model versioning REST APIs cloud infrastructure AWS statistics linear algebra LLMs SageMaker endpoints model monitoring" },
+  { id: "aws_mle_02", title: "Senior ML Engineer - Recommendations", company: "Amazon", desc: "collaborative filtering matrix factorization deep learning Python SageMaker real-time inference feature engineering A/B testing Spark Kafka data pipelines model deployment monitoring Docker AWS Lambda DynamoDB Redis Python SQL scaling ML" },
+  { id: "meta_mle_01", title: "ML Engineer - Feed Ranking", company: "Meta", desc: "Python PyTorch distributed training large-scale feature engineering gradient boosting XGBoost LightGBM FAISS embeddings model compression online learning Spark Hive Presto C++ causal inference multi-task learning transformer architectures experiment frameworks" },
+  { id: "google_mle_01", title: "ML Engineer, Google Cloud AI", company: "Google", desc: "Python TensorFlow Vertex AI Kubernetes distributed systems model serving TFX pipelines feature stores data validation model monitoring Docker BigQuery Dataflow MLOps model optimization quantization" },
+  { id: "openai_mle_01", title: "ML Engineer - Training Infrastructure", company: "OpenAI", desc: "Python PyTorch CUDA distributed training DDP FSDP GPU cluster profiling memory optimization mixed precision training Kubernetes Docker deep learning transformers attention mechanisms systems programming C++" },
+  { id: "netflix_mle_01", title: "Senior ML Engineer - Personalization", company: "Netflix", desc: "Python Scala Spark TensorFlow PyTorch collaborative filtering two-tower models embedding learning causal inference experimentation A/B testing real-time feature serving Kafka Flink feature stores model monitoring AWS SageMaker Docker Kubernetes" },
+  { id: "stripe_mle_01", title: "ML Engineer - Fraud Detection", company: "Stripe", desc: "Python XGBoost gradient boosting anomaly detection real-time inference feature engineering SQL Spark Kafka imbalanced classification precision-recall model explainability SHAP Docker Kubernetes AWS low-latency APIs model monitoring data drift detection" },
+  { id: "uber_mle_01", title: "ML Engineer - Maps & ETA", company: "Uber", desc: "Python TensorFlow PyTorch spatiotemporal modeling graph neural networks XGBoost feature engineering real-time ML Kafka Flink Spark distributed systems model serving A/B testing causal inference geospatial data" },
+  { id: "databricks_mle_01", title: "ML Platform Engineer", company: "Databricks", desc: "Python Spark MLflow distributed computing model registry experiment tracking REST APIs Kubernetes Docker Delta Lake feature stores model serving Java Scala MLOps CI/CD observability auto-scaling inference" },
+  { id: "microsoft_mle_01", title: "Senior ML Engineer - Azure ML", company: "Microsoft", desc: "Python Azure ML PyTorch TensorFlow distributed training MLOps pipelines model deployment Kubernetes Docker feature engineering AutoML responsible AI model fairness interpretability SHAP LIME" },
+  { id: "linkedin_mle_01", title: "ML Engineer - LinkedIn Feed", company: "LinkedIn", desc: "Python Scala Spark TensorFlow PyTorch gradient boosting XGBoost deep learning NLP BERT embeddings feature stores Kafka A/B testing causal inference SQL strong software engineering system design" },
+  { id: "airbnb_mle_01", title: "ML Engineer - Trust & Safety", company: "Airbnb", desc: "Python XGBoost neural networks anomaly detection NLP feature engineering real-time systems Spark Airflow Kubernetes Docker AWS model monitoring explainability A/B testing statistical analysis graph-based fraud detection" },
+  { id: "doordash_mle_01", title: "ML Engineer - Delivery Time Prediction", company: "DoorDash", desc: "Python XGBoost gradient boosting feature engineering Spark Kafka real-time inference Kubernetes Docker AWS SageMaker MLflow time series forecasting geospatial features A/B testing causal inference SQL" },
+  { id: "palantir_mle_01", title: "ML Deployment Engineer", company: "Palantir", desc: "Python Java Spark Docker Kubernetes MLOps model serving feature pipelines data engineering REST APIs model monitoring anomaly detection NLP computer vision strong software engineering" },
+  { id: "snowflake_mle_01", title: "ML Engineer - Snowpark ML", company: "Snowflake", desc: "Python Snowpark distributed computing feature engineering scikit-learn XGBoost model training pipelines Kubernetes Docker SQL data warehousing REST APIs MLOps model registry experiment tracking Java Scala" },
+  { id: "salesforce_mle_01", title: "ML Engineer - Einstein AI", company: "Salesforce", desc: "Python NLP BERT transformers large language models fine-tuning text classification named entity recognition information extraction PyTorch TensorFlow MLflow Docker Kubernetes AWS REST APIs Java model deployment monitoring" },
+  { id: "twitter_mle_01", title: "ML Engineer - Ads Relevance", company: "X (Twitter)", desc: "Python Scala Spark TensorFlow deep learning click-through rate modeling multi-task learning embedding models feature engineering real-time ML Kafka A/B testing distributed systems strong ML fundamentals" },
+  { id: "lyft_mle_01", title: "Senior ML Engineer - Pricing", company: "Lyft", desc: "Python XGBoost neural networks time series causal inference Spark Kafka real-time feature serving SageMaker MLflow Docker Kubernetes reinforcement learning A/B testing experiment design statistical analysis" },
+  { id: "apple_mle_01", title: "ML Engineer - Siri Intelligence", company: "Apple", desc: "Python Swift Core ML PyTorch TensorFlow model compression quantization pruning knowledge distillation NLP speech recognition computer vision federated learning privacy-preserving ML C++ model optimization mobile" },
+  { id: "twosigma_mle_01", title: "ML Engineer - Quantitative Research", company: "Two Sigma", desc: "Python machine learning time series statistical modeling deep learning PyTorch feature engineering Spark SQL C++ mathematics probability statistics linear algebra optimization research reproducible experiments backtesting" }
+];
+
+// ── TF-IDF scoring engine ───────────────────────────────────────────────────
+function tokenize(text) {
+  const t = text.toLowerCase().replace(/[^a-z0-9\s+]/g, ' ');
+  const words = t.split(/\s+/).filter(w => w.length > 2);
+  const bigrams = [], trigrams = [];
+  for (let i = 0; i < words.length - 1; i++) bigrams.push(words[i] + ' ' + words[i+1]);
+  for (let i = 0; i < words.length - 2; i++) trigrams.push(words[i] + ' ' + words[i+1] + ' ' + words[i+2]);
+  return [...words, ...bigrams, ...trigrams];
+}
+
+function buildTFIDF(docs) {
+  const tokenized = docs.map(tokenize);
+  const df = {};
+  tokenized.forEach(toks => { [...new Set(toks)].forEach(t => { df[t] = (df[t]||0)+1; }); });
+  const N = docs.length;
+  return tokenized.map(toks => {
+    const tf = {};
+    toks.forEach(t => { tf[t] = (tf[t]||0)+1; });
+    const vec = {};
+    Object.keys(tf).forEach(t => { vec[t] = (1 + Math.log(tf[t])) * Math.log((N+1)/((df[t]||0)+1)); });
+    const norm = Math.sqrt(Object.values(vec).reduce((s, v) => s + v*v, 0));
+    Object.keys(vec).forEach(t => { vec[t] /= (norm || 1); });
+    return vec;
+  });
+}
+
+function cosineSim(a, b) {
+  let dot = 0;
+  Object.keys(a).forEach(k => { if (b[k]) dot += a[k] * b[k]; });
+  return dot;
+}
+
+function extractSkills(text) {
+  const lower = text.toLowerCase();
+  const found = new Set();
+  Object.values(SKILL_GROUPS).flat().forEach(skill => { if (lower.includes(skill)) found.add(skill); });
+  return found;
+}
+
+function scoreResume(resumeText) {
+  const resumeSkills = extractSkills(resumeText);
+  const results = JOB_DESCRIPTIONS.map(jd => {
+    const [rv, jv] = buildTFIDF([resumeText, jd.desc]);
+    const baseSim = cosineSim(rv, jv);
+    const jobSkills = extractSkills(jd.desc);
+    const matched = [...resumeSkills].filter(s => jobSkills.has(s));
+    const missing = [...jobSkills].filter(s => !resumeSkills.has(s));
+    let bonus = 0;
+    matched.forEach(s => { if (HIGH_VALUE[s]) bonus += HIGH_VALUE[s] * 0.003; });
+    const raw = Math.min(0.97, Math.max(0.08, (baseSim + bonus) * 1.8));
+    const missingWithImpact = missing
+      .filter(s => HIGH_VALUE[s])
+      .map(s => ({ skill: s, impact: HIGH_VALUE[s] }))
+      .sort((a, b) => b.impact - a.impact)
+      .slice(0, 6);
+    return {
+      id: jd.id, title: jd.title, company: jd.company,
+      score: Math.round(raw * 1000) / 10,
+      matchedSkills: matched,
+      missingSkills: missingWithImpact,
+      skillCoverage: Math.round(matched.length / Math.max(jobSkills.size, 1) * 100)
+    };
+  });
+  results.sort((a, b) => b.score - a.score);
+
+  const skillFreq = {};
+  results.slice(0, 5).forEach(r => {
+    r.missingSkills.forEach(({ skill, impact }) => { skillFreq[skill] = (skillFreq[skill]||0) + impact; });
+  });
+  const topMissing = Object.entries(skillFreq).sort((a,b) => b[1]-a[1]).slice(0, 6).map(([skill, impact]) => ({ skill, impact }));
+
+  return { topJob: results[0], allJobs: results, topMissing, resumeSkills: [...resumeSkills] };
+}
+
+// ── UI helpers ───────────────────────────────────────────────────────────────
+function getScoreColor(score) {
+  if (score >= 70) return '#6dfac5';
+  if (score >= 45) return '#fac56d';
+  return '#fa6d9e';
+}
+
+function getBarColor(score) {
+  if (score >= 70) return 'var(--green)';
+  if (score >= 45) return 'var(--amber)';
+  return 'var(--accent2)';
+}
+
+function animateScore(score) {
+  const fill = document.getElementById('scoreFill');
+  const numEl = document.getElementById('scoreNum');
+  const color = getScoreColor(score);
+  const circumference = 314;
+  fill.style.stroke = color;
+  const offset = circumference - (score / 100) * circumference;
+  setTimeout(() => { fill.style.strokeDashoffset = offset; }, 100);
+  let current = 0;
+  const step = score / 60;
+  const interval = setInterval(() => {
+    current = Math.min(current + step, score);
+    numEl.textContent = Math.round(current) + '%';
+    numEl.style.color = color;
+    if (current >= score) clearInterval(interval);
+  }, 16);
+}
+
+const loadingMsgs = [
+  "TOKENIZING RESUME...", "BUILDING TF-IDF VECTORS...", "COMPUTING COSINE SIMILARITY...",
+  "EXTRACTING SKILL FEATURES...", "SCORING 20 JOB DESCRIPTIONS...", "RANKING MATCHES..."
+];
+
+function showResults(data) {
+  const { topJob, allJobs, topMissing, resumeSkills } = data;
+
+  // Hero
+  document.getElementById('topTitle').textContent = topJob.title;
+  document.getElementById('topCompany').textContent = topJob.company.toUpperCase();
+  document.getElementById('matchedCount').textContent = topJob.matchedSkills.length;
+  document.getElementById('coveragePct').textContent = topJob.skillCoverage + '%';
+  animateScore(topJob.score);
+
+  // Stats
+  document.getElementById('stat1').textContent = resumeSkills.length;
+  document.getElementById('stat2').textContent = allJobs.length;
+  const avg = allJobs.reduce((s,j) => s + j.score, 0) / allJobs.length;
+  document.getElementById('stat3').textContent = Math.round(avg) + '%';
+
+  // Skills detected - grouped
+  const skillsEl = document.getElementById('skillsDetected');
+  const grouped = {};
+  resumeSkills.forEach(skill => {
+    for (const [group, skills] of Object.entries(SKILL_GROUPS)) {
+      if (skills.includes(skill)) { (grouped[group] = grouped[group]||[]).push(skill); break; }
+    }
+  });
+  if (Object.keys(grouped).length === 0) {
+    skillsEl.innerHTML = '<p style="color:var(--text-muted);font-size:13px;">No recognized skills found. Try adding technical keywords.</p>';
+  } else {
+    skillsEl.innerHTML = Object.entries(grouped).map(([group, skills]) => `
+      <div class="skill-group">
+        <div class="group-label">${group}</div>
+        ${skills.map(s => `<span class="skill-chip">✓ ${s}</span>`).join('')}
+      </div>`).join('');
+  }
+
+  // Missing skills
+  const missingEl = document.getElementById('missingSkills');
+  missingEl.innerHTML = topMissing.length
+    ? topMissing.map(({ skill, impact }) => `
+        <span class="skill-chip missing">
+          + ${skill}
+          <span class="impact-badge">+${impact}%</span>
+        </span>`).join('')
+    : '<p style="color:var(--green);font-size:13px;">Strong skill coverage across top roles!</p>';
+
+  // Job list
+  const jobListEl = document.getElementById('jobList');
+  jobListEl.innerHTML = allJobs.map((job, i) => `
+    <div class="job-row ${i === 0 ? 'active' : ''}" onclick="selectJob(${i})">
+      <div class="job-rank">${i+1}</div>
+      <div class="job-info">
+        <div class="job-title-text">${job.title}</div>
+        <div class="job-company-text">${job.company}</div>
+      </div>
+      <div class="job-score-bar">
+        <div class="bar-track">
+          <div class="bar-fill" style="width:${job.score}%;background:${getBarColor(job.score)}"></div>
+        </div>
+        <div class="job-score-num" style="color:${getScoreColor(job.score)}">${job.score}%</div>
+      </div>
+    </div>`).join('');
+
+  document.getElementById('loading').classList.remove('active');
+  document.getElementById('results').classList.add('active');
+}
+
+let currentResults = null;
+
+function selectJob(idx) {
+  if (!currentResults) return;
+  document.querySelectorAll('.job-row').forEach((r, i) => r.classList.toggle('active', i === idx));
+  const job = currentResults.allJobs[idx];
+  document.getElementById('topTitle').textContent = job.title;
+  document.getElementById('topCompany').textContent = job.company.toUpperCase();
+  document.getElementById('matchedCount').textContent = job.matchedSkills.length;
+  document.getElementById('coveragePct').textContent = job.skillCoverage + '%';
+  animateScore(job.score);
+  const missingEl = document.getElementById('missingSkills');
+  missingEl.innerHTML = job.missingSkills.length
+    ? job.missingSkills.map(({ skill, impact }) => `
+        <span class="skill-chip missing">+ ${skill} <span class="impact-badge">+${impact}%</span></span>`).join('')
+    : '<p style="color:var(--green);font-size:13px;">Great skill match for this role!</p>';
+}
+
+function analyze() {
+  const text = document.getElementById('resumeInput').value.trim();
+  if (text.length < 50) { alert('Please paste a longer resume (at least 50 characters).'); return; }
+
+  document.getElementById('results').classList.remove('active');
+  document.getElementById('loading').classList.add('active');
+  document.getElementById('analyzeBtn').disabled = true;
+
+  let msgIdx = 0;
+  const msgInterval = setInterval(() => {
+    msgIdx = (msgIdx + 1) % loadingMsgs.length;
+    document.getElementById('loadingMsg').textContent = loadingMsgs[msgIdx];
+  }, 400);
+
+  setTimeout(() => {
+    clearInterval(msgInterval);
+    currentResults = scoreResume(text);
+    showResults(currentResults);
+    document.getElementById('analyzeBtn').disabled = false;
+  }, 2400);
+}
+
+function loadDemo() {
+  const demo = `Machine Learning Engineer | AWS Certified MLE Associate
+  
+Skills: Python, PyTorch, TensorFlow, scikit-learn, XGBoost, SageMaker, AWS, Docker, Kubernetes, FastAPI, SQL, Spark, MLflow, Git
+
+Experience:
+- Teaching Assistant, Rutgers University (2023–2024): Taught ML fundamentals, mentored 80+ students on Python, data preprocessing, and model evaluation.
+- Built Job Application Success Predictor: End-to-end ML pipeline using SageMaker Feature Store, XGBoost for scoring, FastAPI deployment, model monitoring. Scored 1K+ job descriptions against user profiles.
+- Developed fraud detection prototype: Gradient boosting model with SHAP explainability, deployed on SageMaker endpoints with real-time inference.
+
+Projects:
+- SageMaker Pipelines: Automated training → evaluation → deployment with MLflow experiment tracking
+- Feature engineering pipelines with Spark and S3
+- A/B testing framework for model comparison
+- REST API deployment with Docker and Kubernetes
+
+Education: B.S. Computer Science, Rutgers University, 2024
+Certifications: AWS Machine Learning Engineer Associate`;
+
+  document.getElementById('resumeInput').value = demo;
+  document.getElementById('charCount').textContent = demo.length + ' chars';
+}
+
+document.getElementById('resumeInput').addEventListener('input', function() {
+  document.getElementById('charCount').textContent = this.value.length + ' chars';
+});
+</script>
+</body>
+</html>
