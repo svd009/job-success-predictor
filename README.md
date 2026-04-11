@@ -31,49 +31,49 @@ Resume Text
     │
     ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                   SageMaker Processing Job                   │
+│                   SageMaker Processing Job                  │
 │  • Text normalization  • Skill extraction  • TF-IDF vectors │
 └──────────────────────────┬──────────────────────────────────┘
                            │
                            ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                  SageMaker Feature Store                      │
-│  • Resume feature group    • JD feature group                │
-│  • Skill vectors           • Match history                   │
+│                  SageMaker Feature Store                    │
+│  • Resume feature group    • JD feature group               │
+│  • Skill vectors           • Match history                  │
 └──────────────────────────┬──────────────────────────────────┘
                            │
                            ▼
 ┌─────────────────────────────────────────────────────────────┐
-│               XGBoost Training (SageMaker)                   │
-│  • Cosine similarity base score                              │
-│  • Skill overlap features                                    │
-│  • High-value skill bonus weights                            │
-│  • Normalized match score [0, 1]                             │
+│               XGBoost Training (SageMaker)                  │
+│  • Cosine similarity base score                             │
+│  • Skill overlap features                                   │
+│  • High-value skill bonus weights                           │
+│  • Normalized match score [0, 1]                            │
 └──────────────────────────┬──────────────────────────────────┘
                            │
                            ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                SageMaker Real-Time Endpoint                  │
-│  • ml.m5.xlarge instance                                     │
-│  • Auto-scaling: 1–10 instances                              │
-│  • p50 latency: ~120ms                                       │
+│                SageMaker Real-Time Endpoint                 │
+│  • ml.m5.xlarge instance                                    │
+│  • Auto-scaling: 1–10 instances                             │
+│  • p50 latency: ~120ms                                      │
 └──────────────────────────┬──────────────────────────────────┘
                            │
                            ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                   SageMaker Model Monitor                    │
-│  • Data quality monitoring                                   │
-│  • Model quality monitoring                                  │
-│  • Bias drift detection                                      │
-│  • CloudWatch alerts                                         │
+│                   SageMaker Model Monitor                   │
+│  • Data quality monitoring                                  │
+│  • Model quality monitoring                                 │
+│  • Bias drift detection                                     │
+│  • CloudWatch alerts                                        │
 └──────────────────────────┬──────────────────────────────────┘
                            │
                            ▼
 ┌─────────────────────────────────────────────────────────────┐
-│              FastAPI Deployment (Docker + ECS)               │
-│  POST /score        → full resume analysis                   │
-│  POST /score/single → score vs specific JD                   │
-│  GET  /jobs         → list all JDs                           │
+│              FastAPI Deployment (Docker + ECS)              │
+│  POST /score        → full resume analysis                  │
+│  POST /score/single → score vs specific JD                  │
+│  GET  /jobs         → list all JDs                          │
 └─────────────────────────────────────────────────────────────┘
 ```
 
