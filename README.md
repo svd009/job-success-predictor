@@ -1,6 +1,6 @@
 # Job Application Success Predictor
 
-> ML system that scores resume-to-job fit using TF-IDF vectorization, skill gap analysis, and XGBoost-inspired feature engineering — deployed via FastAPI with a SageMaker MLOps architecture.
+> ML system that scores resume-to-job fit using TF-IDF vectorization, skill gap analysis, and XGBoost-inspired feature engineering, deployed via FastAPI with a SageMaker MLOps architecture.
 
 [![AWS MLE](https://img.shields.io/badge/AWS-ML%20Engineer%20Associate-orange?logo=amazon-aws)](https://aws.amazon.com/certification/)
 [![Python](https://img.shields.io/badge/Python-3.10+-blue?logo=python)](https://python.org)
